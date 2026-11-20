@@ -65,7 +65,12 @@ create table if not exists public.calendar_weeks (
 );
 alter table public.calendar_workouts enable row level security;
 alter table public.calendar_messages enable row level security;
+create table if not exists public.calendar_lists (
+  id text primary key,
+  payload jsonb not null default '[]'
+);
 alter table public.calendar_weeks enable row level security;
+alter table public.calendar_lists enable row level security;
 notify pgrst, 'reload schema';
 `
 
@@ -118,13 +123,13 @@ async function storage(): Promise<StorageMode> {
     return mode
   }
   try {
-    await rest('calendar_weeks?select=week&limit=1')
+    await rest('calendar_lists?select=id&limit=1')
     mode = 'supabase'
     await pushLocalWeeks()
     return mode
   } catch (error) {
     const code = (error as { code?: string }).code
-    const missing = code === 'PGRST205' || /calendar_weeks|calendar_workouts/.test(String(error))
+    const missing = code === 'PGRST205' || /calendar_lists|calendar_weeks|calendar_workouts/.test(String(error))
     if (missing) {
       try {
         await runSql(SCHEMA)
@@ -316,6 +321,24 @@ export async function saveWorkouts(workouts: Workout[]) {
         color: workout.color,
       })),
     ),
+  })
+}
+
+export async function loadLists(): Promise<{ todos: unknown; notes: unknown }> {
+  if ((await storage()) !== 'supabase') return { todos: null, notes: null }
+  const rows = (await rest('calendar_lists?select=id,payload')) as Array<{ id: string; payload: unknown }>
+  return {
+    todos: rows.find((row) => row.id === 'todos')?.payload ?? null,
+    notes: rows.find((row) => row.id === 'notes')?.payload ?? null,
+  }
+}
+
+export async function saveList(id: 'todos' | 'notes', payload: unknown) {
+  if ((await storage()) !== 'supabase') return
+  await rest('calendar_lists?on_conflict=id', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ id, payload }),
   })
 }
 

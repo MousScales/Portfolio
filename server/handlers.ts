@@ -2,7 +2,7 @@ import { replyTo } from './chat.js'
 import { placeAround } from './place.js'
 import { poolLines, type DayHours } from './plan.js'
 import { parseRoster } from './roster.js'
-import { loadMessages, loadWeek, loadWorkouts, saveWeek, storageNote } from './supabase.js'
+import { loadLists, loadMessages, loadWeek, loadWorkouts, saveList, saveWeek, storageNote } from './supabase.js'
 
 /** Palladium pool is closed Nov 25–28, 2026. */
 function closedPoolDays(week: string): number[] {
@@ -60,6 +60,17 @@ export async function handleApi(
     if (!allowed(headers)) return { status: 401, body: { error: 'That code is not right.' } }
     const route = path.split('?')[0]
     const week = queryValue(path, 'week')
+
+    if (route === '/api/lists' && method === 'GET') {
+      return { status: 200, body: await loadLists() }
+    }
+
+    if (route === '/api/lists' && (method === 'PUT' || method === 'POST')) {
+      const payload = rawBody ? (JSON.parse(rawBody) as { todos?: unknown; notes?: unknown }) : {}
+      if (payload.todos) await saveList('todos', payload.todos)
+      if (payload.notes) await saveList('notes', payload.notes)
+      return { status: 200, body: await loadLists() }
+    }
 
     if (route === '/api/schedule' && method === 'GET') {
       const [plan, messages, note] = await Promise.all([

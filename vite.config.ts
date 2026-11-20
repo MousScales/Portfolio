@@ -10,7 +10,7 @@ function adminApi(): Plugin {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         const url = String(req.url ?? '')
         const path = url.split('?')[0]
-        if (path !== '/api/schedule' && path !== '/api/chat' && path !== '/api/roster') return next()
+        if (path !== '/api/schedule' && path !== '/api/chat' && path !== '/api/roster' && path !== '/api/lists') return next()
         let raw = ''
         for await (const chunk of req) {
           raw += typeof chunk === 'string' ? chunk : chunk.toString()

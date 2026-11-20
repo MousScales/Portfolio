@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { adminHeaders } from './code'
 
 const TODO_KEY = 'cal-todos'
 const NOTES_KEY = 'cal-notes'
@@ -29,25 +30,35 @@ function asItem(value: Partial<Item> & { done?: boolean }): Item {
   return { id: value.id || uid(), text: value.text ?? '', checkedOn }
 }
 
+function blankFolders(fallback: string): Folder[] {
+  return [{ id: uid(), title: fallback, items: [] }]
+}
+
+function parseFolders(value: unknown, fallback: string): Folder[] {
+  if (!Array.isArray(value) || value.length === 0) return blankFolders(fallback)
+  const rows = value as Array<Partial<Folder> & Partial<Item>>
+  if (rows.every((row) => Array.isArray(row.items))) {
+    return rows.map((folder) => ({
+      id: folder.id || uid(),
+      title: folder.title ?? '',
+      items: (folder.items ?? []).map(asItem),
+    }))
+  }
+  return [{ id: uid(), title: fallback, items: rows.map(asItem) }]
+}
+
 function loadFolders(key: string, fallback: string): Folder[] {
-  const blank = (): Folder[] => [{ id: uid(), title: fallback, items: [] }]
   try {
     const raw = localStorage.getItem(key)
-    if (!raw) return blank()
-    const parsed = JSON.parse(raw) as Array<Partial<Folder> & Partial<Item>>
-    if (!Array.isArray(parsed) || parsed.length === 0) return blank()
-    const folders = parsed.every((row) => Array.isArray(row.items))
-    if (folders) {
-      return parsed.map((folder) => ({
-        id: folder.id || uid(),
-        title: folder.title ?? '',
-        items: (folder.items ?? []).map(asItem),
-      }))
-    }
-    return [{ id: uid(), title: fallback, items: parsed.map(asItem) }]
+    if (!raw) return blankFolders(fallback)
+    return parseFolders(JSON.parse(raw), fallback)
   } catch {
-    return blank()
+    return blankFolders(fallback)
   }
+}
+
+function meaningful(folders: Folder[], fallback: string): boolean {
+  return folders.length > 1 || folders.some((folder) => folder.items.length > 0 || folder.title !== fallback)
 }
 
 function Folders({
@@ -210,6 +221,7 @@ export function TodoList() {
   const [sections, setSections] = useState<Folder[]>(() => loadFolders(TODO_KEY, 'Reminders'))
   const [notes, setNotes] = useState<Folder[]>(() => loadFolders(NOTES_KEY, 'Notes'))
   const [today, setToday] = useState(todayKey)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const id = window.setInterval(() => setToday(todayKey()), 60_000)
@@ -217,12 +229,64 @@ export function TodoList() {
   }, [])
 
   useEffect(() => {
+    let cancel = false
+    const localTodos = loadFolders(TODO_KEY, 'Reminders')
+    const localNotes = loadFolders(NOTES_KEY, 'Notes')
+    fetch('/api/lists', { headers: adminHeaders() })
+      .then(async (response) => {
+        const data = (await response.json()) as { todos?: unknown; notes?: unknown }
+        if (!response.ok) throw new Error('Could not load lists.')
+        return data
+      })
+      .then((data) => {
+        if (cancel) return
+        const remoteTodos = data.todos == null ? null : parseFolders(data.todos, 'Reminders')
+        const remoteNotes = data.notes == null ? null : parseFolders(data.notes, 'Notes')
+        const todos = remoteTodos && meaningful(remoteTodos, 'Reminders') ? remoteTodos : localTodos
+        const nextNotes = remoteNotes && meaningful(remoteNotes, 'Notes') ? remoteNotes : localNotes
+        setSections(todos)
+        setNotes(nextNotes)
+        setReady(true)
+        const body: { todos?: Folder[]; notes?: Folder[] } = {}
+        if ((!remoteTodos || !meaningful(remoteTodos, 'Reminders')) && meaningful(localTodos, 'Reminders')) body.todos = localTodos
+        if ((!remoteNotes || !meaningful(remoteNotes, 'Notes')) && meaningful(localNotes, 'Notes')) body.notes = localNotes
+        if (body.todos || body.notes) {
+          void fetch('/api/lists', { method: 'PUT', headers: adminHeaders(true), body: JSON.stringify(body) })
+        }
+      })
+      .catch(() => {
+        if (!cancel) setReady(true)
+      })
+    return () => {
+      cancel = true
+    }
+  }, [])
+
+  useEffect(() => {
     localStorage.setItem(TODO_KEY, JSON.stringify(sections))
-  }, [sections])
+    if (!ready) return
+    const timer = window.setTimeout(() => {
+      void fetch('/api/lists', {
+        method: 'PUT',
+        headers: adminHeaders(true),
+        body: JSON.stringify({ todos: sections }),
+      })
+    }, 400)
+    return () => window.clearTimeout(timer)
+  }, [sections, ready])
 
   useEffect(() => {
     localStorage.setItem(NOTES_KEY, JSON.stringify(notes))
-  }, [notes])
+    if (!ready) return
+    const timer = window.setTimeout(() => {
+      void fetch('/api/lists', {
+        method: 'PUT',
+        headers: adminHeaders(true),
+        body: JSON.stringify({ notes }),
+      })
+    }, 400)
+    return () => window.clearTimeout(timer)
+  }, [notes, ready])
 
   return (
     <aside className="todo" aria-label="To-do list and notes">
