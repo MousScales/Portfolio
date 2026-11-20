@@ -9,8 +9,8 @@ export function Footer() {
         <div className="footer__identity">
           <p className="footer__name">{person.name}</p>
           <p className="footer__line">
-            Computer &amp; Data Science · Mathematics Minor · Aspiring Quantitative Developer ·
-            Ironman in Training · It won&rsquo;t always be 70 and sunny
+            Mathematics &amp; Computer Science · Financial Engineering Minor · Aspiring Quantitative
+            Developer · Ironman in Training · It won&rsquo;t always be 70 and sunny
           </p>
         </div>
 
@@ -50,6 +50,9 @@ export function Footer() {
       <div className="shell footer__base">
         <p>© {new Date().getFullYear()} Moustapha Gueye</p>
         <p>
+          <a className="btn btn--secondary btn--sm" href="/admin">
+            Admin
+          </a>
           <ExternalLink href={links.mousApps} className="footer__link" label="Mous Apps website">
             Mous Apps
           </ExternalLink>

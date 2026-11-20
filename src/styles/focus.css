@@ -135,6 +135,12 @@
   letter-spacing: -0.02em;
 }
 
+.now__title a {
+  color: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
 .now__status {
   flex-shrink: 0;
   font-family: var(--font-mono);
@@ -483,6 +489,16 @@
 
   .panel__cta,
   .race__cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .panel__cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .panel__cta .btn {
     width: 100%;
     justify-content: center;
   }

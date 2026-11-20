@@ -48,32 +48,40 @@ export const featuredFocus: FeaturedFocus[] = [
   {
     id: 'study',
     index: '03',
-    title: 'Computer & Data Science',
-    text: 'Studying Computer and Data Science at NYU, with a growing focus on mathematics and quantitative development.',
+    title: 'Mathematics & Computer Science',
+    text: 'Studying Mathematics and Computer Science at NYU, minoring in Financial Engineering, with a focus on quantitative development.',
   },
 ]
 
 export const skillGroups: SkillGroup[] = [
   {
     id: 'technical',
-    title: 'Technical',
+    title: 'Languages',
     items: [
-      { label: 'Python' },
-      { label: 'C++' },
       { label: 'JavaScript' },
+      { label: 'C++' },
+      { label: 'Python' },
       { label: 'Swift' },
-      { label: 'HTML' },
-      { label: 'CSS' },
+      { label: 'SQL' },
+      { label: 'HTML/CSS' },
     ],
   },
   {
     id: 'tools',
-    title: 'Tools',
-    items: [{ label: 'Cursor' }, { label: 'n8n' }],
+    title: 'Frameworks & Tools',
+    items: [
+      { label: 'React Native' },
+      { label: 'Supabase' },
+      { label: 'Firebase' },
+      { label: 'Stripe API' },
+      { label: 'Vercel' },
+      { label: 'Xcode' },
+      { label: 'Git' },
+    ],
   },
   {
     id: 'languages',
-    title: 'Languages',
+    title: 'Spoken Languages',
     items: [
       { label: 'Wolof', note: 'Fluent' },
       { label: 'Arabic', note: 'Intermediate' },

@@ -280,10 +280,10 @@ export const timeline: TimelineEntry[] = [
     location: 'New York, New York',
     categories: ['Education'],
     description:
-      'Moustapha currently studies Computer and Data Science at New York University, where he is also minoring in Mathematics. His primary interests include quantitative development, mathematics, software engineering, data, and building technology products.',
+      'Moustapha currently studies Mathematics and Computer Science at New York University, where he is also minoring in Financial Engineering. His primary interests include quantitative development, mathematics, software engineering, and building technology products.',
     meta: [
-      { label: 'Program', value: 'Computer and Data Science' },
-      { label: 'Minor', value: 'Mathematics' },
+      { label: 'Program', value: 'Mathematics and Computer Science' },
+      { label: 'Minor', value: 'Financial Engineering' },
       { label: 'Expected Graduation', value: 'May 2029' },
     ],
     media: {

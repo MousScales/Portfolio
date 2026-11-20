@@ -1,7 +1,7 @@
 import { quantFocus } from '../data/focus'
 import { links } from '../data/site'
 import { ExternalLink } from './ExternalLink'
-import { LinkedInIcon } from './Icons'
+import { GitHubIcon, LinkedInIcon } from './Icons'
 import { Reveal } from './Reveal'
 
 export function QuantPanel() {
@@ -14,14 +14,24 @@ export function QuantPanel() {
         <p className="prose panel__text">{quantFocus.description}</p>
         <p className="panel__note">{quantFocus.clarification}</p>
 
-        <ExternalLink
-          href={links.linkedin}
-          className="btn btn--secondary panel__cta"
-          label="View Moustapha Gueye's professional profile on LinkedIn"
-        >
-          <LinkedInIcon size={16} />
-          Professional Profile on LinkedIn
-        </ExternalLink>
+        <div className="btn-row panel__cta">
+          <ExternalLink
+            href={links.github}
+            className="btn btn--secondary"
+            label="View Moustapha Gueye's code on GitHub"
+          >
+            <GitHubIcon size={16} />
+            Code on GitHub
+          </ExternalLink>
+          <ExternalLink
+            href={links.linkedin}
+            className="btn btn--secondary"
+            label="View Moustapha Gueye's professional profile on LinkedIn"
+          >
+            <LinkedInIcon size={16} />
+            Professional Profile on LinkedIn
+          </ExternalLink>
+        </div>
       </div>
 
       <div className="panel__content">
@@ -42,7 +52,15 @@ export function QuantPanel() {
             {quantFocus.now.map((item) => (
               <li key={item.title} className="now__item">
                 <div className="now__head">
-                  <h5 className="now__title">{item.title}</h5>
+                  <h5 className="now__title">
+                    {'href' in item && item.href ? (
+                      <ExternalLink href={item.href} label={`${item.title} on GitHub`}>
+                        {item.title}
+                      </ExternalLink>
+                    ) : (
+                      item.title
+                    )}
+                  </h5>
                   <span className="now__status">{item.status}</span>
                 </div>
                 <p className="now__text">{item.text}</p>

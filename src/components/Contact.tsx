@@ -5,6 +5,13 @@ import { Reveal } from './Reveal'
 
 const channels = [
   {
+    id: 'github',
+    label: 'GitHub',
+    href: links.github,
+    icon: GitHubIcon,
+    aria: 'Moustapha Gueye on GitHub',
+  },
+  {
     id: 'linkedin',
     label: 'LinkedIn',
     href: links.linkedin,
@@ -66,15 +73,6 @@ export function Contact() {
               </li>
             )
           })}
-
-          <li>
-            <div className="channel channel--empty">
-              <span className="channel__icon" aria-hidden="true">
-                <GitHubIcon size={18} />
-              </span>
-              <span className="channel__label">GitHub</span>
-            </div>
-          </li>
         </Reveal>
       </div>
     </section>

@@ -6,32 +6,39 @@ export const quantFocus = {
   title: 'Quantitative Development',
   eyebrow: 'Career Goal',
   /** Shown as a small credential line directly under the panel title. */
-  study: 'New York University — Computer and Data Science, minoring in Mathematics',
+  study: 'New York University — Mathematics and Computer Science, minoring in Financial Engineering',
   description:
-    'Moustapha is combining computer science, data, mathematics, and software development to prepare for a career in quantitative development. Right now that looks less like a finished resume line and more like a compiler, a problem set, and another LeetCode tab.',
+    'Moustapha is studying mathematics and computer science, with a minor in financial engineering, to prepare for quantitative development. The work is public on GitHub as much as it is on a problem set: LearningCpp is the C++ log, and the same profile holds the products he has already shipped.',
   /** Framing note so the goal is never mistaken for a current job title. */
   clarification:
-    'He is not a practicing quantitative developer. He is a Computer and Data Science student doing the unglamorous part first — the foundation.',
+    'He is not a practicing quantitative developer. He is a Mathematics and Computer Science student doing the unglamorous part first — the foundation, committed in public.',
   areas: [
     'C++',
     'Python',
     'Data structures and algorithms',
     'Mathematics',
+    'Financial engineering',
     'Probability and statistics',
     'Software engineering',
     'Performance-focused systems',
-    'Financial-market technology',
   ],
   now: [
     {
-      title: 'First large C++ project',
-      status: 'In progress',
-      text: 'Currently working on his first big C++ project. It is not published yet, so it stays unnamed here until it can stand on its own.',
+      title: 'LearningCpp',
+      status: 'GitHub',
+      href: 'https://github.com/MousScales/LearningCpp',
+      text: 'A public C++ log: algorithms, data structures, memory management, and systems programming, aimed at quantitative development.',
     },
     {
       title: 'LeetCode',
       status: 'Daily',
       text: 'Grinding LeetCode like it personally challenged him. Data structures, algorithms, and the occasional problem that looks friendly until the constraints arrive.',
+    },
+    {
+      title: 'MousScales',
+      status: 'GitHub',
+      href: 'https://github.com/MousScales',
+      text: 'GeniusAI, Hudā, Samba, Styld, and Plates live in the same profile. The career goal and the shipped software are one body of work.',
     },
   ],
 } as const

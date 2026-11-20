@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/react'
+import { Admin } from './admin/Admin'
 import { Contact } from './components/Contact'
 import { Focus } from './components/Focus'
 import { Footer } from './components/Footer'
@@ -16,7 +17,17 @@ import { useSectionFocus } from './hooks/useSectionFocus'
 /** Stable identity keeps the section observer from re-subscribing on render. */
 const SECTION_IDS = navItems.map((item) => item.id)
 
+function isAdminPath() {
+  const path = window.location.pathname.replace(/\/+$/, '') || '/'
+  return path === '/admin'
+}
+
 export default function App() {
+  if (isAdminPath()) return <Admin />
+  return <Portfolio />
+}
+
+function Portfolio() {
   const prefersReducedMotion = useReducedMotion()
   const activeId = useSectionFocus(SECTION_IDS, !prefersReducedMotion)
 

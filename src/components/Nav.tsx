@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { navItems, links, person } from '../data/site'
 import { ExternalLink } from './ExternalLink'
-import { CloseIcon, LinkedInIcon, MenuIcon, StravaIcon } from './Icons'
+import { CloseIcon, GitHubIcon, LinkedInIcon, MenuIcon, StravaIcon } from './Icons'
 
 interface NavProps {
   activeId: string
@@ -78,6 +78,14 @@ export function Nav({ activeId }: NavProps) {
 
           <div className="nav__social">
             <ExternalLink
+              href={links.github}
+              className="icon-link"
+              label="Moustapha Gueye on GitHub"
+              withArrow={false}
+            >
+              <GitHubIcon />
+            </ExternalLink>
+            <ExternalLink
               href={links.linkedin}
               className="icon-link"
               label="Moustapha Gueye on LinkedIn"
@@ -133,6 +141,10 @@ export function Nav({ activeId }: NavProps) {
         </nav>
 
         <div className="nav__panel-social">
+          <ExternalLink href={links.github} className="btn btn--secondary btn--sm" label="Moustapha Gueye on GitHub">
+            <GitHubIcon size={16} />
+            GitHub
+          </ExternalLink>
           <ExternalLink href={links.linkedin} className="btn btn--secondary btn--sm" label="Moustapha Gueye on LinkedIn">
             <LinkedInIcon size={16} />
             LinkedIn
