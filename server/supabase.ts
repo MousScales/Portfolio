@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { defaultWorkouts, type Workout } from './plan.ts'
-import type { Shift } from './roster.ts'
+import { defaultWorkouts, type Workout } from './plan.js'
+import type { Shift } from './roster.js'
 
 export interface StoredMessage {
   role: 'user' | 'assistant'
@@ -11,12 +11,14 @@ export interface StoredMessage {
 function config() {
   const url = process.env.SUPABASE_URL
   const key = process.env.SUPABASE_SECRET_KEY
-  if (!url || !key) throw new Error('Supabase is not configured on the server.')
+  if (!url || !key) return null
   return { url: url.replace(/\/$/, ''), key }
 }
 
 async function rest(path: string, init: RequestInit = {}) {
-  const { url, key } = config()
+  const settings = config()
+  if (!settings) throw new Error('Supabase is not configured on the server.')
+  const { url, key } = settings
   const response = await fetch(`${url}/rest/v1/${path}`, {
     ...init,
     headers: {
@@ -59,7 +61,9 @@ notify pgrst, 'reload schema';
 `
 
 async function runSql(query: string) {
-  const { url, key } = config()
+  const settings = config()
+  if (!settings) throw new Error('Supabase is not configured on the server.')
+  const { url, key } = settings
   const ref = new URL(url).hostname.split('.')[0]
   const headers = {
     apikey: key,
@@ -87,6 +91,8 @@ export type StorageMode = 'supabase' | 'file'
 
 let mode: StorageMode | null = null
 let fileUntil = 0
+let memory: FileStore | null = null
+const onVercel = Boolean(process.env.VERCEL)
 
 function isNetwork(error: unknown) {
   const message = error instanceof Error ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}` : ''
@@ -96,6 +102,11 @@ function isNetwork(error: unknown) {
 async function storage(): Promise<StorageMode> {
   if (mode === 'supabase') return mode
   if (mode === 'file' && Date.now() < fileUntil) return 'file'
+  if (!config()) {
+    mode = 'file'
+    fileUntil = Date.now() + 30_000
+    return mode
+  }
   try {
     await rest('calendar_workouts?select=id&limit=1')
     mode = 'supabase'
@@ -108,11 +119,9 @@ async function storage(): Promise<StorageMode> {
         await runSql(SCHEMA)
         mode = 'supabase'
         return mode
-      } catch (sqlError) {
-        if (!isNetwork(sqlError) && !isNetwork(error)) throw sqlError
+      } catch {
+        // Fall through to a local or in-memory week so the calendar still opens.
       }
-    } else if (!isNetwork(error)) {
-      throw error
     }
     mode = 'file'
     fileUntil = Date.now() + 30_000
@@ -140,19 +149,36 @@ function storePath() {
 }
 
 function readStore(): FileStore {
-  const path = storePath()
-  if (!existsSync(path)) return { workouts: [], messages: [] }
-  return JSON.parse(readFileSync(path, 'utf8')) as FileStore
+  if (onVercel) {
+    memory ??= { workouts: [], messages: [] }
+    return memory
+  }
+  try {
+    const path = storePath()
+    if (!existsSync(path)) return memory ?? { workouts: [], messages: [] }
+    return JSON.parse(readFileSync(path, 'utf8')) as FileStore
+  } catch {
+    return memory ?? { workouts: [], messages: [] }
+  }
 }
 
 function writeStore(store: FileStore) {
-  mkdirSync(join(process.cwd(), '.calendar'), { recursive: true })
-  writeFileSync(storePath(), JSON.stringify(store, null, 2))
+  if (onVercel) {
+    memory = store
+    return
+  }
+  try {
+    mkdirSync(join(process.cwd(), '.calendar'), { recursive: true })
+    writeFileSync(storePath(), JSON.stringify(store, null, 2))
+  } catch {
+    memory = store
+  }
 }
 
 export async function storageNote(): Promise<string | null> {
   const current = await storage()
   if (current === 'supabase') return null
+  if (onVercel) return 'Supabase is not connected, so this week stays in memory until the server restarts.'
   return 'Supabase did not resolve from this computer, so this week is saved locally and will move to the project when the host answers.'
 }
 

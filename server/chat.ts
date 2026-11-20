@@ -5,8 +5,8 @@ import {
   poolLines,
   validateWorkouts,
   type Workout,
-} from './plan.ts'
-import { loadMessages, loadWorkouts, saveMessage, saveWorkouts } from './supabase.ts'
+} from './plan.js'
+import { loadMessages, loadWorkouts, saveMessage, saveWorkouts } from './supabase.js'
 
 const TOOLS = [
   {

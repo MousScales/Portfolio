@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
-import { handleApi } from './server/handlers.ts'
+import { handleApi } from './server/handlers.js'
 
 function adminApi(): Plugin {
   return {

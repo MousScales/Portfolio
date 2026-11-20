@@ -1,6 +1,6 @@
-import { meetings } from '../src/admin/schedule.ts'
-import { gymWindow, poolWindows, travelGap, validateWorkouts, type DayHours, type Workout } from './plan.ts'
-import type { Shift } from './roster.ts'
+import { meetings } from '../src/admin/schedule.js'
+import { gymWindow, poolWindows, travelGap, validateWorkouts, type DayHours, type Workout } from './plan.js'
+import type { Shift } from './roster.js'
 
 interface Span {
   day: number

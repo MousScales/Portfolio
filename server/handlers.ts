@@ -1,8 +1,8 @@
-import { replyTo } from './chat.ts'
-import { placeAround } from './place.ts'
-import { poolLines, type DayHours } from './plan.ts'
-import { parseRoster } from './roster.ts'
-import { loadMessages, loadWeek, loadWorkouts, saveWeek, storageNote } from './supabase.ts'
+import { replyTo } from './chat.js'
+import { placeAround } from './place.js'
+import { poolLines, type DayHours } from './plan.js'
+import { parseRoster } from './roster.js'
+import { loadMessages, loadWeek, loadWorkouts, saveWeek, storageNote } from './supabase.js'
 
 /** Palladium pool is closed Nov 25–28, 2026. */
 function closedPoolDays(week: string): number[] {
@@ -43,7 +43,8 @@ function queryValue(path: string, key: string): string {
   return ''
 }
 
-function allowed(headers: Record<string, string | string[] | undefined>) {
+function allowed(headers: Record<string, string | string[] | undefined> | undefined) {
+  if (!headers) return false
   const raw = headers['x-admin-code'] ?? headers['X-Admin-Code']
   const code = Array.isArray(raw) ? raw[0] : raw
   return code === (process.env.ADMIN_CODE || '1953')
@@ -55,11 +56,11 @@ export async function handleApi(
   headers: Record<string, string | string[] | undefined>,
   rawBody: string,
 ): Promise<{ status: number; body: unknown }> {
-  if (!allowed(headers)) return { status: 401, body: { error: 'That code is not right.' } }
-  const route = path.split('?')[0]
-  const week = queryValue(path, 'week')
-
   try {
+    if (!allowed(headers)) return { status: 401, body: { error: 'That code is not right.' } }
+    const route = path.split('?')[0]
+    const week = queryValue(path, 'week')
+
     if (route === '/api/schedule' && method === 'GET') {
       const [plan, messages, note] = await Promise.all([
         /^\d{4}-\d{2}-\d{2}$/.test(week)
