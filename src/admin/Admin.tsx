@@ -1,12 +1,10 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { ADMIN_CODE } from './code'
+import { ADMIN_CODE, ADMIN_SESSION_KEY } from './code'
 import { WeekCalendar } from './WeekCalendar'
 import './admin.css'
 
-const STORAGE_KEY = 'cal-admin'
-
 export function Admin() {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(STORAGE_KEY) === '1')
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(ADMIN_SESSION_KEY) === '1')
   const [code, setCode] = useState('')
   const [error, setError] = useState(false)
 
@@ -26,7 +24,7 @@ export function Admin() {
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (code.trim() === ADMIN_CODE) {
-      sessionStorage.setItem(STORAGE_KEY, '1')
+      sessionStorage.setItem(ADMIN_SESSION_KEY, '1')
       setUnlocked(true)
       setError(false)
       return

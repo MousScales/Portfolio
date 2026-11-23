@@ -343,3 +343,69 @@ a.channel:hover {
 .footer__link:hover {
   color: var(--navy);
 }
+
+.admin-pop {
+  width: min(100% - 2rem, 22rem);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgb(13 15 20 / 18%);
+}
+
+.admin-pop::backdrop {
+  background: rgb(13 15 20 / 46%);
+}
+
+.admin-pop__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.4rem 1.35rem 1.2rem;
+}
+
+.admin-pop__kicker {
+  margin: 0 0 0.25rem;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy-soft);
+}
+
+.admin-pop h2 {
+  margin: 0 0 1rem;
+  font-size: var(--fs-h4);
+  letter-spacing: -0.02em;
+}
+
+.admin-pop__label {
+  margin-bottom: 0.35rem;
+  font-size: var(--fs-micro);
+  color: var(--ink-3);
+}
+
+.admin-pop__input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-body);
+}
+
+.admin-pop__error {
+  margin: 0.55rem 0 0;
+  color: #9b2c2c;
+  font-size: var(--fs-small);
+}
+
+.admin-pop__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
