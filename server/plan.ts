@@ -93,7 +93,7 @@ export const defaultWorkouts: Workout[] = [
   block('wed-bike', '50 mile bike', 3, 14 * 60, 16 * 60 + 12, GYM),
   block('wed-swim', '2k swim', 3, 11 * 60, 11 * 60 + 40, POOL),
   block('thu-posterior', 'Posterior', 4, 11 * 60 + 5, 11 * 60 + 50, GYM),
-  block('thu-bike', '5 mile bike', 4, 11 * 60 + 50, 12 * 60 + 4, GYM),
+  block('thu-run', '5 mile run', 4, 11 * 60 + 50, 12 * 60 + 35, GYM),
   block('fri-anterior', 'Anterior', 5, 8 * 60 + 30, 9 * 60 + 15, GYM),
   block('fri-swim', 'Ironman swim · 2.4 mi', 5, 11 * 60, 12 * 60, POOL),
   block('sat-bike', '100 mile bike', 6, 8 * 60, 12 * 60 + 24, GYM),
