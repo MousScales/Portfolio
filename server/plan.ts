@@ -137,7 +137,8 @@ export function travelGap(a: string, b: string): number {
   }
   const left = zone(a)
   const right = zone(b)
-  if (!left || !right || left === right) return 0
+  if (left === right) return 0
+  if (!left || !right) return 15
   if (left === 'work' || right === 'work') return 20
   if ((left === 'gym' && right === 'square') || (left === 'square' && right === 'gym')) return 10
   return 15
